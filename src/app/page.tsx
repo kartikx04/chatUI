@@ -50,7 +50,7 @@ export default function LandingPage() {
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <span className="text-primary-foreground font-display font-bold text-sm">K</span>
           </div>
-          <span className="font-display font-semibold text-foreground tracking-tight">Kayee</span>
+          <span className="font-display font-semibold text-foreground tracking-tight">Banterrr</span>
         </div>
         <a
           href={`${API_URL}/google-sso`}
@@ -93,7 +93,7 @@ export default function LandingPage() {
           className="text-muted-foreground text-lg md:text-xl max-w-xl leading-relaxed mb-10"
           style={{ animation: 'fadeUp 0.6s ease 0.2s forwards', opacity: 0 }}
         >
-          Kayee is a slang for <em>"what&apos;s up"</em> — and that&apos;s exactly what this is.
+          Banterrr is a slang for <em>"what&apos;s up"</em> — and that&apos;s exactly what this is.
           Fast, no-frills real-time messaging built on Go and Redis.
         </p>
 
@@ -133,7 +133,7 @@ export default function LandingPage() {
               <div className="w-3 h-3 rounded-full bg-red-500/50" />
               <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
               <div className="w-3 h-3 rounded-full bg-green-500/50" />
-              <span className="ml-3 text-xs text-muted-foreground font-mono">kayee — chat</span>
+              <span className="ml-3 text-xs text-muted-foreground font-mono">Banterrr — chat</span>
             </div>
             {/* Fake chat UI */}
             <div className="flex h-48">
@@ -201,7 +201,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-border px-8 py-6 max-w-6xl mx-auto w-full flex items-center justify-between">
-        <span className="text-xs text-muted-foreground font-mono">kayee © 2026</span>
+        <span className="text-xs text-muted-foreground font-mono">Banterrr © 2026</span>
         <span className="text-xs text-muted-foreground">built with Go + Redis + Next.js</span>
       </footer>
     </main>

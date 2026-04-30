@@ -43,10 +43,11 @@ export function useWebSocket({ user, onMessage }: UseWebSocketOptions) {
     }
 
     ws.onclose = () => {
-      setConnected(false)
-      // Reconnect after 3s
-      reconnectTimeout.current = setTimeout(() => connect(), 3000)
-    }
+  setConnected(false)
+  if (mountedRef.current) { // ← only reconnect if still mounted
+    reconnectTimeout.current = setTimeout(() => connect(), 3000)
+  }
+}
 
     ws.onerror = (err) => {
       console.error('WS error:', err)
@@ -54,13 +55,17 @@ export function useWebSocket({ user, onMessage }: UseWebSocketOptions) {
     }
   }, [user])
 
-  useEffect(() => {
-    connect()
-    return () => {
-      clearTimeout(reconnectTimeout.current)
-      wsRef.current?.close()
-    }
-  }, [connect])
+  const mountedRef = useRef(true)
+
+useEffect(() => {
+  mountedRef.current = true
+  connect()
+  return () => {
+    mountedRef.current = false
+    clearTimeout(reconnectTimeout.current)
+    wsRef.current?.close()
+  }
+}, [connect])
 
   const sendMessage = useCallback((fromId: string, toId: string, message: string) => {
     if (wsRef.current?.readyState !== WebSocket.OPEN) return false

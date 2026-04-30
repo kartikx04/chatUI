@@ -29,33 +29,27 @@ export default function HomePage() {
   // Load contacts on mount
   useEffect(() => {
   if (!user) return
-  console.log('Fetching contacts for user:', user.id)
   setContactsLoading(true)
   apiClient.getContacts(user.id)
     .then(res => {
-      console.log('getContacts result:', res.data)
-      if (res.data.data) setContacts(res.data.data)
+      setContacts(res.data.data ?? [])
     })
-    .catch(err => console.error('getContacts error:', err))
+    .catch(err => console.error('contacts fetch failed:', err))
     .finally(() => setContactsLoading(false))
 }, [user])
 
   // Load chat history when contact is selected
   useEffect(() => {
-    if (!user || !activeContact) return
+  if (!user || !activeContact) return
 
-    // If we already loaded history for this contact, skip
-    if (messages.has(activeContact.id)) return
-
-    setHistoryLoading(true)
-    apiClient.getChatHistory(user.id, activeContact.id)
-      .then(res => {
-        const chats = res.data.data || []
-        setMessages(prev => new Map(prev).set(activeContact.id, [...chats].reverse()))
-      })
-      .catch(console.error)
-      .finally(() => setHistoryLoading(false))
-  }, [activeContact, user, messages])
+  setHistoryLoading(true)
+  apiClient.getChatHistory(user.id, activeContact.id)
+    .then(res => {
+      setMessages(prev => new Map(prev).set(activeContact.id, res.data ?? []))
+    })
+    .catch(err => console.error('history fetch failed:', err))
+    .finally(() => setHistoryLoading(false))
+}, [activeContact, user])
 
   // Handle incoming WebSocket messages
   const handleIncomingMessage = useCallback((chat: Chat) => {
@@ -80,11 +74,10 @@ export default function HomePage() {
     onMessage: handleIncomingMessage,
   })
 
-  const handleSend = (message: string) => {
-    if (!user || !activeContact) return
-    const sent = sendMessage(user.id, activeContact.id, message)
-    if (!sent) console.warn('WebSocket not connected, message not sent')
-  }
+  const handleSend = useCallback((message: string) => {
+  if (!user || !activeContact) return
+  sendMessage(user.id, activeContact.id, message)
+}, [user, activeContact, sendMessage])
 
   const handleSelectContact = (contact: ContactList) => {
     setActiveContact(contact)
@@ -113,7 +106,7 @@ export default function HomePage() {
           <div className="w-6 h-6 rounded-md bg-primary flex items-center justify-center">
             <span className="text-primary-foreground font-display font-bold text-xs">K</span>
           </div>
-          <span className="font-display font-semibold text-sm">Kayee</span>
+          <span className="font-display font-semibold text-sm">Banterrr</span>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5">

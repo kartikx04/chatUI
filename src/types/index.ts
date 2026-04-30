@@ -38,3 +38,13 @@ export interface APIResponse<T = unknown> {
   data?: T
   total?: number
 }
+
+export interface Chat {
+  id: string
+  from_id: string
+  to_id: string
+  message: string
+  created_at: string
+  created_at_unix: number
+  is_self: boolean  // set by backend per-client on broadcast
+}

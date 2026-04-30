@@ -1,31 +1,29 @@
 'use client'
 
-import { Suspense } from 'react'
-import { useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useUser } from '@/hooks/useUser'
 
 function CallbackHandler() {
   const router = useRouter()
-  const params = useSearchParams()
   const { setUser } = useUser()
 
   useEffect(() => {
-    const id = params.get('id')
-    const username = params.get('username')
-    const email = params.get('email') || ''
-
-    console.log('CallbackHandler mounted, params:', { id, username, email })
-
-    if (id && username) {
-      console.log('Setting user and redirecting to /home')
-      setUser({ id, username, email })
-      router.replace('/home')
-    } else {
-      console.log('No params, redirecting to /')
-      router.replace('/')
-    }
-  }, [params, router, setUser])
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/me`, {
+      credentials: 'include', // sends the httpOnly cookie automatically
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error('unauthorized')
+        return res.json()
+      })
+      .then((data) => {
+        setUser({ id: data.id, username: data.username, email: data.email })
+        router.replace('/home')
+      })
+      .catch(() => {
+        router.replace('/')
+      })
+  }, [router, setUser])
 
   return (
     <div className="h-screen flex items-center justify-center">
