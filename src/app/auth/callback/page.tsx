@@ -1,29 +1,35 @@
 'use client'
 
 import { Suspense, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useUser } from '@/hooks/useUser'
 
 function CallbackHandler() {
   const router = useRouter()
+  const params = useSearchParams()
   const { setUser } = useUser()
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/me`, {
-      credentials: 'include', // sends the httpOnly cookie automatically
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error('unauthorized')
-        return res.json()
+    const token = params.get('token')
+    if (!token) {
+      router.replace('/')
+      return
+    }
+
+    // Decode the JWT payload (it's not sensitive to read, only to forge)
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]))
+      localStorage.setItem('auth_token', token)
+      setUser({
+        id: payload.user_id,
+        username: payload.username,
+        email: payload.email,
       })
-      .then((data) => {
-        setUser({ id: data.id, username: data.username, email: data.email })
-        router.replace('/home')
-      })
-      .catch(() => {
-        router.replace('/')
-      })
-  }, [router, setUser])
+      router.replace('/home')
+    } catch {
+      router.replace('/')
+    }
+  }, [params, router, setUser])
 
   return (
     <div className="h-screen flex items-center justify-center">

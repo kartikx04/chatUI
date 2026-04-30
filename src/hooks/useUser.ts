@@ -25,9 +25,10 @@ export function useUser() {
   }, [])
 
   const logout = useCallback(() => {
-    localStorage.removeItem('chat_user')
-    setUser(null)
-  }, [])
+  localStorage.removeItem('chat_user')
+  localStorage.removeItem('auth_token') // ← add this
+  setUser(null)
+}, [])
 
   return { user, loading, setUser: setAndStoreUser, logout }
 }
