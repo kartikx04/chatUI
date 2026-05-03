@@ -15,27 +15,66 @@ function CallbackHandler() {
       router.replace('/')
       return
     }
-
-    // Decode the JWT payload (it's not sensitive to read, only to forge)
     try {
       const payload = JSON.parse(atob(token.split('.')[1]))
       localStorage.setItem('auth_token', token)
-      setUser({
-        id: payload.user_id,
-        username: payload.username,
-        email: payload.email,
-      })
+      setUser({ id: payload.user_id, username: payload.username, email: payload.email })
       router.replace('/home')
     } catch {
       router.replace('/')
     }
   }, [params, router, setUser])
 
+  return <AuthLoadingScreen label="Signing you in" />
+}
+
+function AuthLoadingScreen({ label }: { label: string }) {
   return (
-    <div className="h-screen flex items-center justify-center">
+    <div
+      className="h-screen flex flex-col items-center justify-center gap-8 bg-background"
+      style={{ userSelect: 'none' }}
+    >
+      {/* Logo mark */}
       <div className="flex flex-col items-center gap-3">
-        <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-        <p className="text-sm text-muted-foreground">Signing you in...</p>
+        <div
+          style={{
+            width: 40,
+            height: 40,
+            background: 'hsl(158 64% 52%)',
+            clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <span
+            className="font-display font-bold"
+            style={{ fontSize: 16, color: 'hsl(220 16% 6%)' }}
+          >
+            B
+          </span>
+        </div>
+        <span className="font-display font-semibold tracking-tight text-foreground">Banterrr</span>
+      </div>
+
+      {/* Spinner + label */}
+      <div className="flex flex-col items-center gap-3">
+        <div
+          style={{
+            width: 28,
+            height: 28,
+            borderRadius: '50%',
+            border: '2px solid hsl(158 64% 52% / 0.2)',
+            borderTopColor: 'hsl(158 64% 52%)',
+            animation: 'spin 0.85s linear infinite',
+          }}
+        />
+        <p
+          className="font-mono text-muted-foreground"
+          style={{ fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase' }}
+        >
+          {label}
+        </p>
       </div>
     </div>
   )
@@ -43,11 +82,7 @@ function CallbackHandler() {
 
 export default function CallbackPage() {
   return (
-    <Suspense fallback={
-      <div className="h-screen flex items-center justify-center">
-        <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-      </div>
-    }>
+    <Suspense fallback={<AuthLoadingScreen label="Loading" />}>
       <CallbackHandler />
     </Suspense>
   )
